@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "lint-dockerfile": "dockerfilelint dockerfile",
+    "lint-dockerfile": "dockerfilelint Dockerfile",
     "lint-yaml": "eslint . --ext .yml",
     "prettier": "prettier --write ."
   },
