@@ -1,10 +1,13 @@
 {
   "name": "my-hyperdev-app",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "What am I about?",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "lint-dockerfile": "dockerfilelint dockerfile",
+    "lint-yaml": "eslint . --ext .yml",
+    "prettier": "prettier --write ."
   },
   "dependencies": {
     "express": "^4.14.0",
@@ -29,5 +32,11 @@
     "hyperdev",
     "express"
   ],
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "dockerfilelint": "^1.8.0",
+    "eslint": "^7.12.1",
+    "eslint-plugin-yaml": "^0.3.0",
+    "prettier": "^2.1.2"
+  }
 }
