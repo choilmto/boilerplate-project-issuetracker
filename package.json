@@ -4,10 +4,16 @@
   "description": "What am I about?",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js",
+    "start": "node ./dist/server.js",
     "lint-dockerfile": "dockerfilelint Dockerfile",
     "lint-yaml": "eslint . --ext .yml",
-    "prettier": "prettier --write ."
+    "prettier": "prettier --write .",
+    "prebuild:test": "rm -rf dist",
+    "build:test": "tsc --project tsconfig.test.json",
+    "postbuild:test": "cp -r ./views ./public ./dist",
+    "prebuild": "rm -rf dist",
+    "build": "tsc --project tsconfig.production.json",
+    "postbuild": "cp -r ./views ./public ./dist"
   },
   "dependencies": {
     "express": "^4.14.0",
@@ -37,6 +43,7 @@
     "dockerfilelint": "^1.8.0",
     "eslint": "^7.12.1",
     "eslint-plugin-yaml": "^0.3.0",
-    "prettier": "^2.1.2"
+    "prettier": "^2.1.2",
+    "typescript": "^4.0.5"
   }
 }
