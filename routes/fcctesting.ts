@@ -30,30 +30,35 @@
 var cors = require("cors");
 var fs = require("fs");
 var runner = require("../test-runner");
+import { Application, Response, Request, NextFunction } from "express";
 
-module.exports = function (app) {
-  app.route("/_api/server.js").get(function (req, res, next) {
-    console.log("requested");
-    fs.readFile(__dirname + "/server.js", function (err, data) {
-      if (err) return next(err);
-      res.send(data.toString());
+module.exports = function (app: Application) {
+  app
+    .route("/_api/server.js")
+    .get(function (req: Request, res: Response, next: NextFunction): void {
+      console.log("requested");
+      fs.readFile(__dirname + "/server.js", function (err, data): void {
+        if (err) return next(err);
+        res.send(data.toString());
+      });
     });
-  });
-  app.route("/_api/routes/api.js").get(function (req, res, next) {
-    console.log("requested");
-    fs.readFile(__dirname + "/routes/api.js", function (err, data) {
-      if (err) return next(err);
-      res.type("txt").send(data.toString());
+  app
+    .route("/_api/routes/api.js")
+    .get(function (req: Request, res: Response, next: NextFunction): void {
+      console.log("requested");
+      fs.readFile(__dirname + "/routes/api.js", function (err, data): void {
+        if (err) return next(err);
+        res.type("txt").send(data.toString());
+      });
     });
-  });
   app
     .route("/_api/controllers/convertHandler.js")
-    .get(function (req, res, next) {
+    .get(function (req: Request, res: Response, next: NextFunction): void {
       console.log("requested");
       fs.readFile(__dirname + "/controllers/convertHandler.js", function (
         err,
         data
-      ) {
+      ): void {
         if (err) return next(err);
         res.type("txt").send(data.toString());
       });
@@ -63,38 +68,39 @@ module.exports = function (app) {
   app.get(
     "/_api/get-tests",
     cors(),
-    function (req, res, next) {
+    function (req: Request, res: Response, next: NextFunction): void {
       console.log(error);
       if (!error && process.env.NODE_ENV === "test") return next();
       res.json({ status: "unavailable" });
     },
-    function (req, res, next) {
+    function (req: Request, res: Response, next: NextFunction): void {
       if (!runner.report) return next();
       res.json(testFilter(runner.report, req.query.type, req.query.n));
     },
-    function (req, res) {
-      runner.on("done", function (report) {
+    function (req: Request, res: Response): void {
+      runner.on("done", function (report): void {
         process.nextTick(() =>
           res.json(testFilter(runner.report, req.query.type, req.query.n))
         );
       });
     }
   );
-  app.get("/_api/app-info", function (req, res) {
-    var hs = Object.keys(res._headers).filter(
+  app.get("/_api/app-info", function (req: Request, res): void {
+    var hs: string[] = Object.keys((<any>res)._headers).filter(
       (h) => !h.match(/^access-control-\w+/)
     );
-    var hObj = {};
-    hs.forEach((h) => {
-      hObj[h] = res._headers[h];
+    var hObj: object = {};
+    hs.forEach((h: string): void => {
+      hObj[h] = (<any>res)._headers[h];
     });
-    delete res._headers["strict-transport-security"];
+    delete (<any>res)._headers["strict-transport-security"];
     res.json({ headers: hObj });
   });
 };
 
-function testFilter(tests, type, n) {
+function testFilter(tests, type, n): void {
   var out;
+  Response;
   switch (type) {
     case "unit":
       out = tests.filter((t) => t.context.match("Unit Tests"));
