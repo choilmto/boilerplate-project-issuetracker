@@ -27,9 +27,9 @@
 
 "use strict";
 
+import { Test, emitter as runner } from "../test-runner";
 var cors = require("cors");
 var fs = require("fs");
-var runner = require("../test-runner");
 import { Application, Response, Request, NextFunction } from "express";
 
 module.exports = function (app: Application) {
@@ -98,8 +98,8 @@ module.exports = function (app: Application) {
   });
 };
 
-function testFilter(tests, type, n): void {
-  var out;
+function testFilter(tests: Test[], type, n): Test[] | Test {
+  var out: Test[];
   Response;
   switch (type) {
     case "unit":
@@ -107,7 +107,8 @@ function testFilter(tests, type, n): void {
       break;
     case "functional":
       out = tests.filter(
-        (t) => t.context.match("Functional Tests") && !t.title.match("#example")
+        (t): boolean =>
+          t.context.match("Functional Tests") && !t.title.match("#example")
       );
       break;
     default:

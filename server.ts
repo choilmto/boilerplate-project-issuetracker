@@ -1,4 +1,5 @@
 "use strict";
+import { Application, Response, Request, NextFunction } from "express";
 
 var express = require("express");
 var bodyParser = require("body-parser");
@@ -7,9 +8,9 @@ var cors = require("cors");
 
 var apiRoutes = require("./routes/api.js");
 var fccTestingRoutes = require("./routes/fcctesting.js");
-var runner = require("./test-runner");
+import { Test, emitter as runner } from "./test-runner";
 
-var app = express();
+var app: Application = express();
 
 app.use("/public", express.static(process.cwd() + "/public"));
 
@@ -19,12 +20,12 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 //Sample front-end
-app.route("/:project/").get(function (req, res) {
+app.route("/:project/").get(function (req: Request, res: Response): void {
   res.sendFile(process.cwd() + "/views/issue.html");
 });
 
 //Index page (static HTML)
-app.route("/").get(function (req, res) {
+app.route("/").get(function (req: Request, res: Response): void {
   res.sendFile(process.cwd() + "/views/index.html");
 });
 
@@ -35,7 +36,7 @@ fccTestingRoutes(app);
 apiRoutes(app);
 
 //404 Not Found Middleware
-app.use(function (req, res, next) {
+app.use(function (req: Request, res: Response, next: NextFunction): void {
   res.status(404).type("text").send("Not Found");
 });
 
@@ -44,7 +45,7 @@ app.listen(process.env.PORT || 3000, function () {
   console.log("Listening on port " + process.env.PORT);
   if (process.env.NODE_ENV === "test") {
     console.log("Running Tests...");
-    setTimeout(function () {
+    setTimeout(function (): void {
       try {
         runner.run();
       } catch (e) {
