@@ -1,5 +1,6 @@
 import { MongoMemoryServer } from "mongodb-memory-server";
 var MongoClient = require("mongodb");
+var logger = require("./logger");
 
 async function getConnectionString() {
   if (process.env.NODE_ENV === "test") {
@@ -10,7 +11,9 @@ async function getConnectionString() {
 }
 
 getConnectionString().then((connectionString: string) =>
-  MongoClient.connect(connectionString, function (err, db): void {})
+  MongoClient.connect(connectionString, function (err, db): void {
+    logger.error(err);
+  })
 );
 
 module.exports = MongoClient;

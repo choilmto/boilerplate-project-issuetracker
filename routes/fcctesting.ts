@@ -31,12 +31,13 @@ import { Test, emitter as runner } from "../test-runner";
 var cors = require("cors");
 var fs = require("fs");
 import { Application, Response, Request, NextFunction } from "express";
+var logger = require("../logger");
 
 module.exports = function (app: Application) {
   app
     .route("/_api/server.js")
     .get(function (req: Request, res: Response, next: NextFunction): void {
-      console.log("requested");
+      logger.info("requested");
       fs.readFile(__dirname + "/server.js", function (err, data): void {
         if (err) return next(err);
         res.send(data.toString());
@@ -45,7 +46,7 @@ module.exports = function (app: Application) {
   app
     .route("/_api/routes/api.js")
     .get(function (req: Request, res: Response, next: NextFunction): void {
-      console.log("requested");
+      logger.info("requested");
       fs.readFile(__dirname + "/routes/api.js", function (err, data): void {
         if (err) return next(err);
         res.type("txt").send(data.toString());
@@ -54,7 +55,7 @@ module.exports = function (app: Application) {
   app
     .route("/_api/controllers/convertHandler.js")
     .get(function (req: Request, res: Response, next: NextFunction): void {
-      console.log("requested");
+      logger.info("requested");
       fs.readFile(__dirname + "/controllers/convertHandler.js", function (
         err,
         data
@@ -69,7 +70,7 @@ module.exports = function (app: Application) {
     "/_api/get-tests",
     cors(),
     function (req: Request, res: Response, next: NextFunction): void {
-      console.log(error);
+      logger.info(error);
       if (!error && process.env.NODE_ENV === "test") return next();
       res.json({ status: "unavailable" });
     },
