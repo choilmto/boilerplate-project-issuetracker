@@ -6,7 +6,7 @@
  *       (if additional are added, keep them at the very end!)
  */
 import Mocha from "mocha";
-import * as chai from "chai";
+var chai = require("chai");
 import chaiHttp = require("chai-http");
 var assert: Chai.AssertStatic = chai.assert;
 var server: Express.Application = require("../server");

@@ -9,11 +9,9 @@
 "use strict";
 
 var expect = require("chai").expect;
-var MongoClient = require("mongodb");
-var ObjectId = require("mongodb").ObjectID;
-import { Application, Request, Response } from "express";
+var DBClient = require("../connect");
 
-const CONNECTION_STRING: string = process.env.DB; //MongoClient.connect(CONNECTION_STRING, function(err, db) {});
+import { Application, Request, Response } from "express";
 
 module.exports = function (app: Application): void {
   app
