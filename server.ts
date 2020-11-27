@@ -5,6 +5,7 @@ var express = require("express");
 var bodyParser = require("body-parser");
 var expect = require("chai").expect;
 var cors = require("cors");
+var logger = require("./logger");
 require("dotenv").config();
 
 var apiRoutes = require("./routes/api.js");
@@ -43,16 +44,16 @@ app.use(function (req: Request, res: Response, next: NextFunction): void {
 
 //Start our server and tests!
 app.listen(process.env.PORT || 3000, function () {
-  console.log("Listening on port " + process.env.PORT);
+  logger.info("Listening on port " + process.env.PORT);
   if (process.env.NODE_ENV === "test") {
-    console.log("Running Tests...");
+    logger.info("Running Tests...");
     setTimeout(function (): void {
       try {
         runner.run();
       } catch (e) {
         var error = e;
-        console.log("Tests are not valid:");
-        console.log(error);
+        logger.error("Tests are not valid:");
+        logger.error(error);
       }
     }, 3500);
   }
