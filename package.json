@@ -8,11 +8,8 @@
     "lint-dockerfile": "dockerfilelint Dockerfile",
     "lint-yaml": "eslint . --ext .yml",
     "prettier": "prettier --write .",
-    "prebuild:test": "rm -rf dist",
-    "build:test": "tsc --project tsconfig.test.json",
-    "postbuild:test": "cp -r ./views ./public ./dist",
     "prebuild": "rm -rf dist",
-    "build": "tsc --project tsconfig.production.json",
+    "build": "tsc --project tsconfig.json",
     "postbuild": "cp -r ./views ./public ./dist"
   },
   "dependencies": {
