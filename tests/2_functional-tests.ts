@@ -9,8 +9,11 @@ import Mocha from "mocha";
 var chai = require("chai");
 import chaiHttp = require("chai-http");
 var assert: Chai.AssertStatic = chai.assert;
+var expect = chai.expect;
 var server: Express.Application = require("../server");
+var chaiDateString = require("chai-date-string");
 chai.use(chaiHttp);
+chai.use(chaiDateString);
 
 suite("Functional Tests", function (): void {
   suite(
@@ -27,18 +30,74 @@ suite("Functional Tests", function (): void {
             assigned_to: "Chai and Mocha",
             status_text: "In QA",
           })
-          .end(function (err, res) {
+          .end(function (err, res): void {
+            if (err) {
+              done(err);
+            }
             assert.equal(res.status, 200);
-
-            //fill me in too!
-
+            assert.equal(res.body.issue_title, "Title");
+            assert.equal(res.body.issue_text, "text");
+            assert.equal(
+              res.body.created_by,
+              "Functional Test - Every field filled in"
+            );
+            assert.equal(res.body.assigned_to, "Chai and Mocha");
+            assert.equal(res.body.status_text, "In QA");
+            expect(res.body.created_on).to.be.a.dateString();
+            expect(res.body.updated_on).to.be.a.dateString();
+            assert.equal(res.body.open, true);
+            assert.exists(res.body._id);
             done();
           });
       });
 
-      test("Required fields filled in", function (done: Mocha.Done): void {});
+      test("Required fields filled in", function (done: Mocha.Done): void {
+        chai
+          .request(server)
+          .post("/api/issues/test")
+          .send({
+            issue_title: "Title",
+            issue_text: "text",
+            created_by: "Functional Test - Every field filled in",
+          })
+          .end(function (err, res): void {
+            if (err) {
+              done(err);
+            }
+            assert.equal(res.status, 200);
+            assert.equal(res.body.issue_title, "Title");
+            assert.equal(res.body.issue_text, "text");
+            assert.equal(
+              res.body.created_by,
+              "Functional Test - Every field filled in"
+            );
+            assert.isUndefined(res.body.assigned_to);
+            assert.isUndefined(res.body.status_text);
+            expect(res.body.created_on).to.be.a.dateString();
+            expect(res.body.updated_on).to.be.a.dateString();
+            assert.equal(res.body.open, true);
+            assert.exists(res.body._id);
+            done();
+          });
+      });
 
-      test("Missing required fields", function (done: Mocha.Done): void {});
+      test("Missing required fields", function (done: Mocha.Done): void {
+        chai
+          .request(server)
+          .post("/api/issues/test")
+          .send({
+            issue_title: "Title",
+            issue_text: "text",
+          })
+          .end(function (err, res): void {
+            if (err) {
+              done(err);
+            }
+            assert.equal(res.status, 200);
+            assert.deepEqual(res.body, { error: "Missing required fields." });
+            done();
+          });
+      });
     }
   );
 
@@ -59,6 +118,9 @@ suite("Functional Tests", function (): void {
           .get("/api/issues/test")
           .query({})
           .end(function (err, res): void {
+            if (err) {
+              return done(err);
+            }
             assert.equal(res.status, 200);
             assert.isArray(res.body);
             assert.property(res.body[0], "issue_title");
