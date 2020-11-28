@@ -38,7 +38,7 @@ var Mocha = require("mocha"),
   path = require("path");
 
 var mocha: MochaClass = new Mocha();
-var testDir: string = "./tests";
+var testDir: string = "./dist/tests";
 
 // Add each .js file to the mocha instance
 fs.readdirSync(testDir)
