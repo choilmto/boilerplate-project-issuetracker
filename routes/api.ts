@@ -90,7 +90,22 @@ module.exports = function (app: Application): void {
       }
     })
 
-    .delete(function (req: Request, res: Response) {
+    .delete(async function (req: Request, res: Response): Promise<void> {
       var project: string = req.params.project;
+      var _id: string = req.body._id;
+      if (!_id) {
+        res.send("_id error");
+        return;
+      }
+      try {
+        var dbo = await db;
+        await dbo
+          .collection("issue_tracker")
+          .findAndRemove({ _id: ObjectID(_id), project_name: project });
+        res.send("deleted " + _id);
+      } catch (error) {
+        logger.error(error);
+        res.send("could not delete " + _id);
+      }
     });
 };
