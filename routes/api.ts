@@ -85,6 +85,7 @@ module.exports = function (app: Application): void {
           );
         res.send("successfully updated");
       } catch (error) {
+        logger.error(error);
         res.send("could not update " + _id);
       }
     })
