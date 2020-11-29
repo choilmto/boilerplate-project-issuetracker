@@ -33,6 +33,7 @@ suite("Functional Tests", function (): void {
           .end(function (err, res): void {
             if (err) {
               done(err);
+              return;
             }
             assert.equal(res.status, 200);
             assert.equal(res.body.issue_title, "Title");
@@ -63,6 +64,7 @@ suite("Functional Tests", function (): void {
           .end(function (err, res): void {
             if (err) {
               done(err);
+              return;
             }
             assert.equal(res.status, 200);
             assert.equal(res.body.issue_title, "Title");
@@ -92,9 +94,10 @@ suite("Functional Tests", function (): void {
           .end(function (err, res): void {
             if (err) {
               done(err);
+              return;
             }
             assert.equal(res.status, 200);
-            assert.deepEqual(res.body, { error: "Missing required fields." });
+            assert.equal(res.text, "missing required fields");
             done();
           });
       });
@@ -110,6 +113,7 @@ suite("Functional Tests", function (): void {
         .end(function (err, res): void {
           if (err) {
             done(err);
+            return;
           }
           assert.equal(res.status, 200);
           assert.equal(res.text, "missing required fields");
@@ -128,7 +132,11 @@ suite("Functional Tests", function (): void {
           assigned_to: "Chai and Mocha",
           status_text: "In QA",
         })
-        .then(function (response): void {
+        .end(function (err, response): void {
+          if (err) {
+            done(err);
+            return;
+          }
           chai
             .request(server)
             .put("/api/issues/test")
@@ -139,6 +147,7 @@ suite("Functional Tests", function (): void {
             .end(function (err, res): void {
               if (err) {
                 done(err);
+                return;
               }
               assert.equal(res.status, 200);
               assert.equal(res.text, "successfully updated");
@@ -158,7 +167,11 @@ suite("Functional Tests", function (): void {
           assigned_to: "Chai and Mocha",
           status_text: "In QA",
         })
-        .then(function (response): void {
+        .end(function (err, response): void {
+          if (err) {
+            done(err);
+            return;
+          }
           chai
             .request(server)
             .put("/api/issues/test")
@@ -170,6 +183,7 @@ suite("Functional Tests", function (): void {
             .end(function (err, res): void {
               if (err) {
                 done(err);
+                return;
               }
               assert.equal(res.status, 200);
               assert.equal(res.text, "successfully updated");
@@ -204,7 +218,8 @@ suite("Functional Tests", function (): void {
               .query({})
               .end(function (err, res): void {
                 if (err) {
-                  return done(err);
+                  done(err);
+                  return;
                 }
                 assert.equal(res.status, 200);
                 assert.isArray(res.body);
@@ -244,7 +259,8 @@ suite("Functional Tests", function (): void {
               .query({ issue_text: "text" })
               .end(function (err, res): void {
                 if (err) {
-                  return done(err);
+                  done(err);
+                  return;
                 }
                 assert.equal(res.status, 200);
                 assert.isArray(res.body);
@@ -321,7 +337,11 @@ suite("Functional Tests", function (): void {
           assigned_to: "Chai and Mocha",
           status_text: "In QA",
         })
-        .then(function (response): void {
+        .end(function (err, response): void {
+          if (err) {
+            done(err);
+            return;
+          }
           chai
             .request(server)
             .delete("/api/issues/test")

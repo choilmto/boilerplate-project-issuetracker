@@ -52,7 +52,7 @@ module.exports = function (app: Application): void {
         !body.hasOwnProperty("issue_text") ||
         !body.hasOwnProperty("created_by")
       ) {
-        res.json({ error: "Missing required fields." });
+        res.send("missing required fields");
         return;
       }
       var entry: object = {
