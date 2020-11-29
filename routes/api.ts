@@ -18,8 +18,26 @@ module.exports = function (app: Application): void {
   app
     .route("/api/issues/:project")
 
-    .get(function (req: Request, res: Response) {
+    .get(async function (
+      req: Request,
+      res: Response,
+      next: NextFunction
+    ): Promise<void> {
       var project: string = req.params.project;
+      var query = <any>{ ...req.query };
+      var _id: string = query._id;
+      if (_id) {
+        query._id = ObjectID(_id);
+      }
+      query.project_name = project;
+      try {
+        var dbo = await db;
+        var results = await dbo.collection("issue_tracker").find(query);
+        res.json(await results.toArray());
+      } catch (error) {
+        logger.error(error);
+        next(error);
+      }
     })
 
     .post(async function (
