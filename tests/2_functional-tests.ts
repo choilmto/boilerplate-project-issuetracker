@@ -179,38 +179,119 @@ suite("Functional Tests", function (): void {
     });
   });
 
-  // suite(
-  //   "GET /api/issues/{project} => Array of objects with issue data",
-  //   function () {
-  //     test("No filter", function (done: Mocha.Done): void {
-  //       chai
-  //         .request(server)
-  //         .get("/api/issues/test")
-  //         .query({})
-  //         .end(function (err, res): void {
-  //           if (err) {
-  //             return done(err);
-  //           }
-  //           assert.equal(res.status, 200);
-  //           assert.isArray(res.body);
-  //           assert.property(res.body[0], "issue_title");
-  //           assert.property(res.body[0], "issue_text");
-  //           assert.property(res.body[0], "created_on");
-  //           assert.property(res.body[0], "updated_on");
-  //           assert.property(res.body[0], "created_by");
-  //           assert.property(res.body[0], "assigned_to");
-  //           assert.property(res.body[0], "open");
-  //           assert.property(res.body[0], "status_text");
-  //           assert.property(res.body[0], "_id");
-  //           done();
-  //         });
-  //     });
+  suite(
+    "GET /api/issues/{project} => Array of objects with issue data",
+    function () {
+      test("No filter", function (done: Mocha.Done): void {
+        chai
+          .request(server)
+          .post("/api/issues/test")
+          .send({
+            issue_title: "Title",
+            issue_text: "text",
+            created_by: "User",
+            assigned_to: "Chai and Mocha",
+            status_text: "In QA",
+          })
+          .end(function (err): void {
+            if (err) {
+              done(err);
+              return;
+            }
+            chai
+              .request(server)
+              .get("/api/issues/test")
+              .query({})
+              .end(function (err, res): void {
+                if (err) {
+                  return done(err);
+                }
+                assert.equal(res.status, 200);
+                assert.isArray(res.body);
+                assert.property(res.body[0], "issue_title");
+                assert.property(res.body[0], "issue_text");
+                assert.property(res.body[0], "created_on");
+                assert.property(res.body[0], "updated_on");
+                assert.property(res.body[0], "created_by");
+                assert.property(res.body[0], "assigned_to");
+                assert.property(res.body[0], "open");
+                assert.property(res.body[0], "status_text");
+                assert.property(res.body[0], "_id");
+                done();
+              });
+          });
+      });
 
-  //     test("One filter", function (done: Mocha.Done): void {});
+      test("One filter", function (done: Mocha.Done): void {
+        chai
+          .request(server)
+          .post("/api/issues/test")
+          .send({
+            issue_title: "Title",
+            issue_text: "text",
+            created_by: "User",
+            assigned_to: "Chai and Mocha",
+            status_text: "In QA",
+          })
+          .end(function (err): void {
+            if (err) {
+              done(err);
+              return;
+            }
+            chai
+              .request(server)
+              .get("/api/issues/test")
+              .query({ issue_text: "text" })
+              .end(function (err, res): void {
+                if (err) {
+                  return done(err);
+                }
+                assert.equal(res.status, 200);
+                assert.isArray(res.body);
+                res.body.forEach((entry) =>
+                  assert.equal(entry.issue_text, "text")
+                );
+                done();
+              });
+          });
+      });
 
-  //     test("Multiple filters (test for multiple fields you know will be in the db for a return)", function (done: Mocha.Done): void {});
-  //   }
-  // );
+      test("Multiple filters (test for multiple fields you know will be in the db for a return)", function (done: Mocha.Done): void {
+        chai
+          .request(server)
+          .post("/api/issues/test")
+          .send({
+            issue_title: "Title",
+            issue_text: "text",
+            created_by: "User",
+            assigned_to: "Chai and Mocha",
+            status_text: "In QA",
+          })
+          .end(function (err): void {
+            if (err) {
+              done(err);
+              return;
+            }
+            chai
+              .request(server)
+              .get("/api/issues/test")
+              .query({ issue_text: "text", created_by: "User" })
+              .end(function (err, res): void {
+                if (err) {
+                  return done(err);
+                }
+                assert.equal(res.status, 200);
+                assert.isArray(res.body);
+                res.body.forEach((entry) => {
+                  assert.equal(entry.issue_text, "text");
+                  assert.equal(entry.created_by, "User");
+                });
+                done();
+              });
+          });
+      });
+    }
+  );
 
   suite("DELETE /api/issues/{project} => text", function (): void {
     test("No _id", function (done: Mocha.Done): void {
