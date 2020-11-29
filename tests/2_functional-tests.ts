@@ -58,7 +58,7 @@ suite("Functional Tests", function (): void {
           .send({
             issue_title: "Title",
             issue_text: "text",
-            created_by: "Functional Test - Every field filled in",
+            created_by: "Functional Test - Required fields filled in",
           })
           .end(function (err, res): void {
             if (err) {
@@ -69,10 +69,10 @@ suite("Functional Tests", function (): void {
             assert.equal(res.body.issue_text, "text");
             assert.equal(
               res.body.created_by,
-              "Functional Test - Every field filled in"
+              "Functional Test - Required fields filled in"
             );
-            assert.isUndefined(res.body.assigned_to);
-            assert.isUndefined(res.body.status_text);
+            assert.equal(res.body.assigned_to, "");
+            assert.equal(res.body.status_text, "");
             expect(res.body.created_on).to.be.a.dateString();
             expect(res.body.updated_on).to.be.a.dateString();
             assert.equal(res.body.open, true);
