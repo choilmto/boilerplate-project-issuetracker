@@ -80,7 +80,7 @@ module.exports = function (app: Application): void {
           .collection("issue_tracker")
           .updateOne(
             { _id: ObjectID(_id), project_name: project },
-            { $set: body },
+            { $set: { ...body, updated_on: new Date() } },
             { upsert: false }
           );
         res.send("successfully updated");
