@@ -48,7 +48,7 @@ module.exports = function (app: Application): void {
       try {
         var dbo = await db;
         var saved = await dbo
-          .collection(project)
+          .collection("issue_tracker")
           .insertOne({ ...entry, project_name: project });
         res.json({
           ...entry,
@@ -60,8 +60,33 @@ module.exports = function (app: Application): void {
       }
     })
 
-    .put(function (req: Request, res: Response) {
+    .put(async function (req: Request, res: Response): Promise<void> {
       var project: string = req.params.project;
+      var body = req.body;
+      var _id: string = body._id;
+      delete body._id;
+
+      if (!_id) {
+        res.send("missing required fields");
+        return;
+      }
+      if (Object.keys(body).length === 0) {
+        res.send("no updated field sent");
+        return;
+      }
+      try {
+        var dbo = await db;
+        await dbo
+          .collection("issue_tracker")
+          .updateOne(
+            { _id: ObjectID(_id), project_name: project },
+            { $set: body },
+            { upsert: false }
+          );
+        res.send("successfully updated");
+      } catch (error) {
+        res.send("could not update " + _id);
+      }
     })
 
     .delete(function (req: Request, res: Response) {

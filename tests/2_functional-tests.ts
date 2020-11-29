@@ -102,11 +102,81 @@ suite("Functional Tests", function (): void {
   );
 
   suite("PUT /api/issues/{project} => text", function (): void {
-    test("No body", function (done: Mocha.Done): void {});
+    test("No body", function (done: Mocha.Done): void {
+      chai
+        .request(server)
+        .put("/api/issues/test")
+        .send()
+        .end(function (err, res): void {
+          if (err) {
+            done(err);
+          }
+          assert.equal(res.status, 200);
+          assert.equal(res.text, "missing required fields");
+          done();
+        });
+    });
 
-    test("One field to update", function (done: Mocha.Done): void {});
+    test("One field to update", function (done: Mocha.Done): void {
+      chai
+        .request(server)
+        .post("/api/issues/test")
+        .send({
+          issue_title: "Title",
+          issue_text: "text",
+          created_by: "User",
+          assigned_to: "Chai and Mocha",
+          status_text: "In QA",
+        })
+        .then(function (response): void {
+          chai
+            .request(server)
+            .put("/api/issues/test")
+            .send({
+              _id: response.body._id,
+              issue_text: "Updated text",
+            })
+            .end(function (err, res): void {
+              if (err) {
+                done(err);
+              }
+              assert.equal(res.status, 200);
+              assert.equal(res.text, "successfully updated");
+              done();
+            });
+        });
+    });
 
-    test("Multiple fields to update", function (done: Mocha.Done): void {});
+    test("Multiple fields to update", function (done: Mocha.Done): void {
+      chai
+        .request(server)
+        .post("/api/issues/test")
+        .send({
+          issue_title: "Title",
+          issue_text: "text",
+          created_by: "User",
+          assigned_to: "Chai and Mocha",
+          status_text: "In QA",
+        })
+        .then(function (response): void {
+          chai
+            .request(server)
+            .put("/api/issues/test")
+            .send({
+              _id: response.body._id,
+              issue_text: "Updated text",
+              assigned_to: "User2",
+            })
+            .end(function (err, res): void {
+              if (err) {
+                done(err);
+              }
+              assert.equal(res.status, 200);
+              assert.equal(res.text, "successfully updated");
+              done();
+            });
+        });
+    });
   });
 
   suite(
